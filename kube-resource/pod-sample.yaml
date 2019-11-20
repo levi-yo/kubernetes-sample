@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: springboot-web
+spec:
+  containers:
+  - name: springboot-web
+    image: 1223yys/springboot-web:0.1.6
+    ports:
+    - containerPort: 8080
