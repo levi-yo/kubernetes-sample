@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: web-app
-        image: 1223yys/springboot-web:0.2.3
+        image: 1223yys/springboot-web:0.2.4
         ports:
         - containerPort: 8080

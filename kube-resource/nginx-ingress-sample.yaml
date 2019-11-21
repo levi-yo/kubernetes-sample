@@ -2,11 +2,14 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: nginx-ingress-sample
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - http:
+  - host: levi.local.com
+    http:
       paths:
-      - path: /
-        backend:
-          serviceName: sample-service
-          servicePort: 80
+        - path: /app
+          backend:
+            serviceName: sample-service
+            servicePort: 80
