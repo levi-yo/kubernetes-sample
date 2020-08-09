@@ -1,7 +1,7 @@
-#Kubernetes sample(쿠버네티스 manifast 샘플)
-##./kube-resource/.. -> kubernetes manifast sample files in directory
+# Kubernetes sample(쿠버네티스 manifast 샘플)
+## ./kube-resource/.. -> kubernetes manifast sample files in directory
 
-##apply labels to node(쿠버테티스 노드에 레이블 적용하기)
+## apply labels to node(쿠버테티스 노드에 레이블 적용하기)
 ```
 #show node's labels
 > kubectl get nodes --show-labels
@@ -15,8 +15,8 @@ ex)
 > kubectl label nodes docker-desktop dist_type-
 ```
 
-##apply node selector(노드셀렉터 적용)
-###특정 노드에만 팟이 배포되도록 스케쥴링하는 방법에는 노드셀렉터를 적용할 수 있다.
+## apply node selector(노드셀렉터 적용)
+### 특정 노드에만 팟이 배포되도록 스케쥴링하는 방법에는 노드셀렉터를 적용할 수 있다.
 ```
 apiVersion: v1
 kind: Pod
@@ -31,6 +31,3 @@ spec:
   **nodeSelector:
     disk_type: ssd**
 ```
-=======
-# kubernetes-sample
->>>>>>> 439e8f2c1c095458845de5b8a0f5f7288bd0572c
