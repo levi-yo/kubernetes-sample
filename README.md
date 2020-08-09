@@ -31,3 +31,6 @@ spec:
   **nodeSelector:
     disk_type: ssd**
 ```
+=======
+# kubernetes-sample
+>>>>>>> 439e8f2c1c095458845de5b8a0f5f7288bd0572c
