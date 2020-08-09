@@ -2,10 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: sample-deployment
-  labels:
-    app: springboot-web
 spec:
-  replicas: 4
+  replicas: 2
   selector:
     matchLabels:
       app: springboot-web
@@ -15,7 +13,24 @@ spec:
         app: springboot-web
     spec:
       containers:
-      - name: web-app
-        image: 1223yys/springboot-web:0.2.4
-        ports:
-        - containerPort: 8080
+        - name: springboot-web
+          image: 1223yys/springboot-web:0.2.5
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: config-dev
+                  key: WEP-APP-PORT
+          livenessProbe:
+            httpGet:
+              port: 9090
+              path: /api
+            initialDelaySeconds: 60
+          readinessProbe:
+            httpGet:
+              port: 9090
+              path: /api
+            initialDelaySeconds: 60

@@ -9,7 +9,7 @@ spec:
   - host: levi.local.com
     http:
       paths:
-        - path: /app
-          backend:
-            serviceName: sample-service
-            servicePort: 80
+      - path: /
+        backend:
+          serviceName: springboot-web-service
+          servicePort: 80
