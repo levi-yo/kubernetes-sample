@@ -1,7 +1,7 @@
 # Kubernetes sample(쿠버네티스 manifast 샘플)
 
 <div>
-  <img width="500" src="https://subicura.com/assets/article_images/2019-05-19-kubernetes-basic-1/kubernetes-logo.png">
+  <img width="1000" src="https://subicura.com/assets/article_images/2019-05-19-kubernetes-basic-1/kubernetes-logo.png">
 </div>
 
 ## ./kube-resource/.. -> kubernetes manifast sample files in directory
