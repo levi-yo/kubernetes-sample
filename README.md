@@ -105,3 +105,72 @@ spec:
 - Socket: 설정한 경로에 유닉스 소켓 파일이 있어야한다.
  
 ## Persistent volume & Persistent volume claim
+쿠버네티스에서 볼륨을 사용하는 구조는 PV와 PVC로 분리되어있다. PV는 볼륨 자체를 뜻하고 클러스터 안에서 자원으로 다룬다. 파드하고는 별개로 관리되고 별도의 생명주기가 있다.
+
+PVC는 사용자가 PV에 하는 요청이다. 사용하고 싶은 용량은 얼마인지, 읽기/쓰기는 어떤 모드로 설정하고 싶은지 등을 정하여 요청한다. 
+쿠버네티스는 이처럼 파드에 볼륨을 직접 할당하는 형태가 아니라, 중간에 PVC를 두어 파드와 파드가 사용할 스토리지를 분리했다.
+
+- 다양한 스토리지를 PV로 사용할 수 있지만, 파드에 직접 연결하는 것이 아니고 PVC를 거쳐 사용하므로 파드는 어떤 스토리지를 사용하는지 신경쓸 필요가 없다.
+
+*PV와 PVC 생명주기*
+<div>
+  <img align="center" width="500" src="https://t1.daumcdn.net/cfile/tistory/99705F485B796C433A">
+</div>
+<br>
+
+- Provisioning: PV를 만드는 단계를 뜻한다.
+    - static provisioning: 미리 PV를 만들어 두고 사용자의 요청이 있으면 미리 만들어둔 PV를 할당한다.(보통 스토리지 용량의 제한이 있을때 사용한다.)
+    - dynamic provisioning: 사용자가 PVC를 거쳐 PV를 요청했을 때, PV를 생성해 제공한다.
+- Binding: 바인딩은 프로비저닝으로 만든 PV를 PVC와 연결하는 단계이다. PVC에서 원하는 스토리지의 용량과 접근 방법을 명시해서 요쳥하면 맞는 PV가 할당된다.
+이때 PVC에서 원하는 PV가 없다면 요청은 실패하고, PVC에서 원하는 PV가 생길 때까지 대기하다가 PVC에 바인딩된다.(PVC 하나에 여러 PV가 매핑될 수 없다.)
+- Using: PVC는 파드에 설정되고 파드는 PVC를 볼륨으로 인식해서 사용한다. 할당된 PVC는 파드를 유지하는 동안 계속 사용하며 시스템에서 임의로 삭제할 수 없다.
+이 기능을 "Storage Object In Use Protection"이라 한다.
+- Reclaiming: 사용이 끝난 PVC는 삭제되고 PVC를 사용하던 PV를 초기화하는 과정을 뜻한다. 초기화 정책으로는 아래와 같다.
+    - Retain: PV를 그대로 보존한다. PVC가 삭제되면 사용 중이던 PV는 해제(released)상태라서 아직 다른 PVC가 재사용할 수 없다.(데이터는 아직 그대로 보존되어있다.)
+    만약 해당 PV를 재사용하려면 아래와 같은 순서로 직접 초기화해줘야한다.
+        1. PV삭제. 만약 PV가 외부 스토리지와 연결되어있다면 PV는 삭제되더라도 외부 스토리지의 볼륨은 그대로 남아있다.
+        2. 외부 스토리지에 남은 데이터를 직접 정리한다.
+        3. 남은 스토리지의 볼륨을 삭제하거나 재사용하려면 해당 볼륨을 이용하는 PV를 다시 만든다.
+    - Delete: PV를 삭제하고 연결된 외부 스토리지 쪽의 볼륨도 삭제한다. 동적 프로비저닝은 기본적으로 해당 정책을 따른다.
+    - Recycle: PV의 데이터들을 삭제하고 다시 새로운 PVC에서 PV를 사용할 수 있도록한다.
+    
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: persistent-volume
+  namespace: levi-volume
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual
+  persistentVolumeReclaimPolicy: Delete
+  hostPath:
+    path: /tmp
+```
+
+- accessModes
+    - ReadWriteOne: 노드 하나에만 볼륨을 읽기/쓰기하도록 마운트한다.
+    - ReadOnlyMany: 여러 개 노드의 읽기 전용으로 마운트한다.
+    - ReadWriteMany: 여러 개 노드에서 읽기/쓰기를 허용하도록 마운트한다.
+- storageClassName: 스토리지 클래스를 설정하는 필드이고, PVC가 특정 스토리지 클래스를 명시하여 요청하면 해당 스토리지 클래스로 선언된 PV와 연결된다. 
+만약 스토리지 클래스를 설정하지 않았다면, 특정 스토리지 클래스를 명시하지 않은 PVC가 요청하면 매핑된다.
+- persistentVolumeReclaimPolicy: PV가 해제되었을 때의 초기화 옵션을 설정한다.(Retain/Recycle/Delete)
+- .spec.hostPath: 해당 PV의 볼륨 플러그인을 명시한다.
+
+```shell script
+> kubectl apply -f ./kube-resource/persistent-volume-sample.yaml
+> kubectl get pvc -n levi-volume
+NAME                CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE
+persistent-volume   1Gi        RWO            Delete           Available           manual                  31s
+```
+
+- STATUS
+    - Available: PVC에서 사용할 수 있는 상태
+    - Bound: 특정 PVC에 연결된 상태
+    - Released: PVC는 삭제되었고, PV는 아직 초기화되지 않은 상태
+    - Failed: 자동 초기화를 실패한 상태
+    
