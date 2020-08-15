@@ -133,7 +133,8 @@ PVC는 사용자가 PV에 하는 요청이다. 사용하고 싶은 용량은 얼
         3. 남은 스토리지의 볼륨을 삭제하거나 재사용하려면 해당 볼륨을 이용하는 PV를 다시 만든다.
     - Delete: PV를 삭제하고 연결된 외부 스토리지 쪽의 볼륨도 삭제한다. 동적 프로비저닝은 기본적으로 해당 정책을 따른다.
     - Recycle: PV의 데이터들을 삭제하고 다시 새로운 PVC에서 PV를 사용할 수 있도록한다.
-    
+
+#### - persistent volume template
 ```yaml
 apiVersion: v1
 kind: PersistentVolume
@@ -174,3 +175,122 @@ persistent-volume   1Gi        RWO            Delete           Available        
     - Released: PVC는 삭제되었고, PV는 아직 초기화되지 않은 상태
     - Failed: 자동 초기화를 실패한 상태
     
+#### - persistent volume claim template
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: persistent-volume-claim
+  namespace: levi-volume-claim
+spec:
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual
+  resources:
+    requests:
+      storage: 500Mi
+```
+- .spec.resources.requests.storage: 자원을 얼마나 사용할 것인지 명시한다.
+PV의 용량보다 높다면, 할당되지 않고 Pending 상태가 된다.
+
+```shell script
+> kubectl apply -f ./kube-resource/persistent-volume-claim-sample.yaml
+> kubectl get pvc -n levi-volume-claim
+NAME                      STATUS   VOLUME              CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+persistent-volume-claim   Bound    persistent-volume   1Gi        RWO            manual         11s
+> kubectl get pv -n levi-volume
+NAME                CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                                       STORAGECLASS   REASON   AGE
+persistent-volume   1Gi        RWO            Delete           Bound    levi-volume-claim/persistent-volume-claim   manual                  4h44m
+```
+PVC와 PV가 binding 된 이후에는 각각 STATUS가 Bound 상태로 변경된다.
+
+### Label로 PVC와 PV 연결하기
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: persistent-volume
+  namespace: levi-volume
+  labels:
+    location: local
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual
+  persistentVolumeReclaimPolicy: Delete
+  hostPath:
+    path: /tmp
+```
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: persistent-volume-claim
+  namespace: levi-volume-claim
+spec:
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual
+  resources:
+    requests:
+      storage: 500Mi
+  selector:
+    matchLabels:
+      location: local
+```
+
+### pod에 persistent volume mount
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: springboot-web
+  template:
+    metadata:
+      labels:
+        app: springboot-web
+    spec:
+      containers:
+        - name: springboot-web
+          image: 1223yys/springboot-web:0.2.5
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - mountPath: /test-volume
+              name: persistent-volume
+          env:
+            - name: SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: config-dev
+                  key: WEP-APP-PORT
+          livenessProbe:
+            httpGet:
+              port: 9090
+              path: /api
+            initialDelaySeconds: 60
+          readinessProbe:
+            httpGet:
+              port: 9090
+              path: /api
+            initialDelaySeconds: 60
+      volumes:
+        - name: persistent-volume
+          persistentVolumeClaim:
+            claimName: persistent-volume-claim
+```
+만약 위 예제에 만들어 놓은 persistent volume claim에 마운트를 하면, pod은 뜨지 못하고 pending 상태가 되는데 그 이유는
+"클러스터는 클레임을 사용하는 pod와 동일한 네임스페이스에 있어야 한다." 이다. 위 deployment의 네임 스페이스를 default 이므로, 
+default namespace에 persistent volume claim을 하나 만들어 놓아야한다.

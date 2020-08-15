@@ -2,7 +2,6 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: persistent-volume-claim
-  namespace: levi-volume-claim
 spec:
   volumeMode: Filesystem
   accessModes:
@@ -10,4 +9,7 @@ spec:
   storageClassName: manual
   resources:
     requests:
-      storage: 500MB
+      storage: 500Mi
+  selector:
+    matchLabels:
+      location: local

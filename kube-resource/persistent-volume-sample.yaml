@@ -3,6 +3,8 @@ kind: PersistentVolume
 metadata:
   name: persistent-volume
   namespace: levi-volume
+  labels:
+    location: local
 spec:
   capacity:
     storage: 1Gi
@@ -12,4 +14,4 @@ spec:
   storageClassName: manual
   persistentVolumeReclaimPolicy: Delete
   hostPath:
-    path: /tmp
+    path: /Users/yun-yeoseong/levi.yoon/git/kubernetes-sample/kube-resource/volume
