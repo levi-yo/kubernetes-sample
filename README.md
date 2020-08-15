@@ -33,6 +33,6 @@ spec:
     image: 1223yys/springboot-web:0.1.6
     ports:
     - containerPort: 8080
-  **nodeSelector:
-    disk_type: ssd**
+  nodeSelector:
+    disk_type: ssd
 ```
