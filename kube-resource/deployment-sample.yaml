@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: sample-deployment
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: springboot-web
@@ -14,10 +14,10 @@ spec:
     spec:
       containers:
         - name: springboot-web
-          image: 1223yys/springboot-web:0.2.5
+          image: 1223yys/springboot-web:jdk14
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080
+            - containerPort: 9090
           env:
             - name: SERVER_PORT
               valueFrom:
@@ -28,9 +28,9 @@ spec:
             httpGet:
               port: 9090
               path: /api
-            initialDelaySeconds: 60
+            initialDelaySeconds: 20
           readinessProbe:
             httpGet:
               port: 9090
               path: /api
-            initialDelaySeconds: 60
+            initialDelaySeconds: 20
