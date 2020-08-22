@@ -79,7 +79,7 @@ nginx   88892 yun-yeoseong    6u  IPv4 0x7370b7ed168f296f      0t0  TCP *:http-a
 
 ```shell script
 > curl localhost:8080
-```
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -105,7 +105,7 @@ Commercial support is available at
 <p><em>Thank you for using nginx.</em></p>
 </body>
 </html>
-
+```
 
 브라우저에 welcome to nginx가 보인다면 설치 및 실행이 잘된 것이다 ! 어 그렇다면, 여기서 조금 의아한 것이 있을 것이다. 과연 저 html은 어디서 응답을 준것일까?
 
