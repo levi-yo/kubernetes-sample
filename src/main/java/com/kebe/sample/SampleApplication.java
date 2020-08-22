@@ -22,7 +22,7 @@ public class SampleApplication {
     }
 
     @RequestMapping("/api")
-    public String api(){
+    public String api(String arg){
         log.info("SampleApplication#api :::: current time = {}", LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault()));
         return "new api ! - "+random;
     }
