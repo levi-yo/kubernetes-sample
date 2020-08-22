@@ -12,7 +12,7 @@ Nginx는 요청에 응답하기 위해 비동기 이벤트 기반 구조를 가�
 
 
 
-##Nginx install
+## Nginx install
 ```
 > brew install nginx
 ```
@@ -50,7 +50,7 @@ Or, if you don't want/need a background service you can just run:
 ```
 
 
-##Nginx 구동 명령어(nginx -s "signal")
+## Nginx 구동 명령어(nginx -s "signal")
 - nginx : 서버시작
 - nginx -s stop : 서버종료(워커들이 요청을 처리중이더라도 그냥 종료한다.)
 - nginx -s quit : 워커 프로세스가 현재 요청 처리를 완료할 때까지 대기하고 모두 처리완료된 후에 서버 종료.
@@ -110,11 +110,11 @@ Commercial support is available at
 브라우저에 welcome to nginx가 보인다면 설치 및 실행이 잘된 것이다 ! 어 그렇다면, 여기서 조금 의아한 것이 있을 것이다. 과연 저 html은 어디서 응답을 준것일까?
 
 
-###Docroot
+### Docroot
 답은 도큐먼트 루트에 있다. 설치를 하면 아래와 같은 로그가 출력되어있을 것인데, 해당 디렉토리 내에 html 파일이 존재한다.
 
 
-####Docroot is: /usr/local/var/www
+#### Docroot is: /usr/local/var/www
 기본적으로 웹서버는 다른 서버로 프록시 하지 않는 이상 uri로 명시한 path로 도큐먼트 루트 디렉토리를 찾아서 응답을 주게 된다. 사실 localhost:8080은 localhost:8080/index.html과 같다고 보면된다. 그렇다면 index.html의 위치를 바꾸면 어떻게 될까?
 
 
@@ -175,11 +175,11 @@ Commercial support is available at
 이제는 본격적으로 Nginx의 설정을 커스터마이징해보자.
 
 
-##Configuration file's structure
+## Configuration file's structure
 nginx의 설정 파일은 simple directives(단순 지시문)과 block directives(블록 지시문)으로 나뉜다. 단순 지시문을 공백으로 구분 된 이름과 매개변수로 구성되며 세미콜론(;)으로 끝난다. 블록 지시문은 단순 지시문과 구조가 동일하지만 세미콜론 대신 중괄호({})로 명령 블록을 지정한다. 또한 블록지시문을 블록지시문의 중첩구조로도 이루어 질 수 있다. 이러한 지시문으로 nginx에 플러그인 된 여러 모듈을 제어하게 된다.
 
 
-##Nginx Configuration
+## Nginx Configuration
 nginx.conf 파일에는 nginx의 설정 내용이 들어간다. 해당 파일의 전체적인 구조(모듈)는 아래와 같이 이루어져있다.
 
 ```shell script
@@ -248,8 +248,8 @@ http {
 - location 블록 : location 블록은 server 블록 안에 정의하며 특정 URL을 처리하는 방법을 정의한다. 예를 들어 uri path마다 다르게 요청을 처리하고 싶을 때 해당 블록 내에 정의한다.
 - events 블록 : nginx는 event driven을 메커니즘으로 동작하는데, 이 event driven 동작 방식에 대한 설정을 다룬다.
 
-##nginx.conf
-####"user"
+## nginx.conf
+#### "user"
 user의 값이 root로 되어 있다면 일반 계정으로 변경하는 것이 좋다. nginx는 마스터 프로세스와 워커 프로세스로 동작하고, 워커 프로세스가 실질적인 웹서버의 역할을 수행하는데 user 지시어는 워커프로세스의 권한을 지정한다. 만약 user의 값이 root로 되어 있다면 워커 프로세스를 root의 권한으로 동작하게 되고, 워커 프로세스를 악의적으로 사용자가 제어하게 된다면 해당 머신을 루트 사용자의 권한으로 원격제어하게 되는 셈이기 때문에 보안상 위험하다.
 user 설정의 값으로는 대표성있는 이름(nginx)로 사용하고, 이 계정은 일반 유저의 권한으로 쉘에 접속할 수 없어야 안전하다.
 
@@ -258,25 +258,25 @@ user 설정의 값으로는 대표성있는 이름(nginx)로 사용하고, 이 �
 > useradd --shell /sbin/nologin www-data
 ```
 
-####"worker_process"
+#### "worker_process"
 worker_process는 워커 프로세스를 몇개 생성할 것인지를 지정하는 지시어이다. 이 값이 1이라면 모든 요청을 하나의 프로세스로 실행하겠다는 뜻인데, 여러개의 CPU 코어가 있는 시스템이라면 CPU 코어수만큼 지정하길 권장한다.
 
-####"events.worker_connections"
+#### "events.worker_connections"
 이 값은 몇개의 접속을 동시에 처리할 것인가를 지정하는 값이다. 이 값과 worker_process의 값을 조합해 동시에 최대로 처리할 수 있는 커넥션의 양을 산출할 수 있다.(worker_process*worker_connections)
 
-####"http.incloud"
+#### "http.incloud"
 가상 호스트 설정이나, 반복되는 설정들을 파일로 저장해놓고, incloude를 통해 불러올 수 있다.
 
-####"http.log_format"
+#### "http.log_format"
 access 로그에 남길 로그 포맷을 지정한다. 보통 어떠한 장애가 났을 때, 가장 먼저보는 것이 로그 파일이기 때문에 디버깅하기 위해 유용한 값들을 로그에 남겨두는 것이 중요하다. 특히나, 여러 프록시 서버를 지나오는 서버 구성인 경우에는 x-forwarded-ip 등을 지정하면 지나온 프록시들의 아이피들을 할 수 있다.
 
-####"http.access_log"
+#### "http.access_log"
 access로그를 어느 디렉토리에 남길지 설정한다.
 
-####"http.keepalive_timeout"
+#### "http.keepalive_timeout"
 소켓을 끊지 않고 얼마나 유지할지에 대한 설정이다. 자세한 내용은 keepalive 개념을 확인하자.
 
-####"http.server_tokens"
+#### "http.server_tokens"
 nginx의 버전을 숨길 것인가에 대한 옵션이다. 보안상 활성화하는 것을 권장한다.
 
 기타 설정들은 위 예제 파일에 주석으로 달아놓았다.
@@ -350,7 +350,7 @@ upstream app2 {
 
 위와 같이 설정하고, 각 도메인을 분리해서 요청을 보내보자. server_name으로 분리되어 요청이 프록시 될것이다.
 
-##Nginx cache
+## Nginx cache
 마지막으로 location 블록에 대한 설정중 nginx cache에 설정에 대해 주로 다루어보자.
 
 ````shell script
