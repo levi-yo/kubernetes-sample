@@ -76,6 +76,11 @@ config.v2.json                hostconfig.json
 > helm init --service-account tiller
 > helm repo update
 ```
+#### deleteing chart
+```shell script
+# --purge 옵션으로 관련된 모든 정보를 지운다. 
+helm delete my-kafka --purge
+```
 #### running kafka using helm chart
 ```shell script
 > kubectl create ns kafka
@@ -100,6 +105,18 @@ fluentd-container-logging
 ```shell script
 > kubectl -n kafka exec -ti my-kafka-0 -- /usr/bin/kafka-console-consumer \
 --bootstrap-server my-kafka:9092 --topic fluentd-container-logging --from-beginning
+```
+#### select consumer&offset
+```shell script
+> kubectl -n kafka exec my-kafka-0 -- /usr/bin/kafka-consumer-groups \
+--bootstrap-server my-kafka:9092 --group foo --describe
+> kubectl -n kafka exec my-kafka-0 -- /usr/bin/kafka-topics \
+--zookeeper my-kafka-zookeeper:2181 --topic test1 --describe
+```
+#### start console for producing message
+```shell script
+> kubectl -n kafka exec -ti my-kafka-0 -- /usr/bin/kafka-console-producer \
+--broker-list my-kafka:9092 --topic test1
 ```
 
 ## kubernetes logging pipeline
@@ -170,5 +187,3 @@ fluentd-container-logging
   ingress-nginx-controller-admission   ClusterIP   10.96.76.113   <none>        443/TCP                      21d
 > curl localhost:30431/api
 ```
-
-### 8. Search logging
