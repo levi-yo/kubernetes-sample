@@ -34,10 +34,10 @@ RUN buildDeps="sudo make gcc g++ libc-dev libffi-dev build-essential autoconf au
 
 
 # Copy configuration files
-COPY ./conf/fluentd.conf /fluentd/etc/
-COPY ./conf/systemd.conf /fluentd/etc/
-COPY ./conf/kubernetes.conf /fluentd/etc/
-COPY ./conf/prometheus.conf /fluentd/etc/
+COPY ./conf/fluentd.conf /fluentd/etc/fluentd.conf
+COPY ./conf/systemd.conf /fluentd/etc/systemd.conf
+COPY ./conf/kubernetes.conf /fluentd/etc/kubernetes.conf
+COPY ./conf/prometheus.conf /fluentd/etc/prometheus.conf
 RUN touch /fluentd/etc/disable.conf
 
 # Copy plugins
@@ -46,7 +46,7 @@ COPY entrypoint.sh /fluentd/entrypoint.sh
 
 # Environment variables
 ENV FLUENTD_OPT=""
-ENV FLUENTD_CONF="fluent.conf"
+ENV FLUENTD_CONF="fluentd.conf"
 
 # Overwrite ENTRYPOINT to run fluentd as root for /var/log / /var/lib
 ENTRYPOINT ["tini", "--", "/fluentd/entrypoint.sh"]

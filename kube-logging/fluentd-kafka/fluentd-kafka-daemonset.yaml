@@ -30,6 +30,12 @@ spec:
               value: "my-kafka.kafka.svc.cluster.local:9092"
             - name: FLUENT_KAFKA_DEFAULT_TOPIC
               value: "fluentd-container-logging"
+            - name: FLUENT_KAFKA_OUTPUT_DATA_TYPE
+              value: "json"
+            - name: FLUENT_KAFKA_COMPRESSION_CODEC
+              value: "snappy"
+            - name: FLUENT_KAFKA_MAX_SEND_LIMIT_BYTES
+              value: "4096"
           resources:
             limits:
               memory: 200Mi

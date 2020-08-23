@@ -101,3 +101,74 @@ fluentd-container-logging
 > kubectl -n kafka exec -ti my-kafka-0 -- /usr/bin/kafka-console-consumer \
 --bootstrap-server my-kafka:9092 --topic fluentd-container-logging --from-beginning
 ```
+
+## kubernetes logging pipeline
+### 1. Running kafka
+````shell script
+> helm install --name my-kafka --namespace kafka incubator/kafka
+> kubectl get pod,svc -n kafka
+  NAME                       READY   STATUS    RESTARTS   AGE
+  pod/my-kafka-0             1/1     Running   2          4m14s
+  pod/my-kafka-1             1/1     Running   0          116s
+  pod/my-kafka-2             1/1     Running   0          78s
+  pod/my-kafka-zookeeper-0   1/1     Running   0          4m14s
+  pod/my-kafka-zookeeper-1   1/1     Running   0          3m32s
+  pod/my-kafka-zookeeper-2   1/1     Running   0          3m
+  NAME                                  TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
+  service/my-kafka                      ClusterIP   10.108.104.66   <none>        9092/TCP                     4m14s
+  service/my-kafka-headless             ClusterIP   None            <none>        9092/TCP                     4m14s
+  service/my-kafka-zookeeper            ClusterIP   10.97.205.63    <none>        2181/TCP                     4m14s
+  service/my-kafka-zookeeper-headless   ClusterIP   None            <none>        2181/TCP,3888/TCP,2888/TCP   4m14s
+````
+### 2. Running elasticsearch
+````shell script
+> kubectl apply -f ./kube-logging/fluentd-elasticsearch/elasticsearch.yaml
+> kubectl get pod,svc -n elk-stack
+  NAME                                 READY   STATUS    RESTARTS   AGE
+  pod/elasticsearch-654c5b6b77-l8k2z   1/1     Running   0          50s
+  NAME                    TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+  service/elasticsearch   ClusterIP   10.101.27.73   <none>        9200/TCP   50s
+````
+### 3. Running kibana
+````shell script
+> kubectl apply -f ./kube-logging/fluentd-elasticsearch/kibana.yaml
+> kubectl get pod,svc -n elk-stack | grep kibana
+  NAME                                 READY   STATUS    RESTARTS   AGE
+  pod/kibana-6d474df8c6-fsfc7          1/1     Running   0          24s
+  NAME                                 READY   STATUS    RESTARTS   AGE
+  service/kibana          NodePort    10.97.240.55   <none>        5601:30578/TCP   24s
+````
+### 4. Running logstash
+````shell script
+> kubectl apply -f ./kube-logging/fluentd-elasticsearch/logstash.yaml
+> kubectl get pod,svc -n elk-stack | grep logstash
+  NAME                                       READY   STATUS    RESTARTS   AGE  
+  pod/logstash-deployment-556cfb66b5-6xrs6   1/1     Running   0          34s
+  service/logstash-service   ClusterIP   10.96.13.170   <none>        5044/TCP         33s
+````
+### 5. Running fluentd
+````shell script
+> kubectl apply -f ./kube-logging/fluentd-kafka/fluentd-kafka-daemonset.yaml
+> kubectl get pod,daemonset -n kube-system | grep fluentd
+  NAME                                         READY   STATUS    RESTARTS   AGE
+  pod/fluentd-bqmnl                            1/1     Running   0          34s
+  daemonset.extensions/fluentd      1         1         1       1            1           <none>                        34s
+````
+### 6. Running application
+````shell script
+> kubectl apply -f ./kube-resource/deployment-sample.yaml
+> kubectl get pod
+  NAME                                 READY   STATUS    RESTARTS   AGE
+  sample-deployment-5fbf569554-4pzrf   0/1     Running   0          17s
+````
+
+### 7. Request to application
+```shell script
+> kubectl get svc -n ingress-nginx
+  NAME                                 TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE
+  ingress-nginx-controller             NodePort    10.97.27.106   <none>        80:30431/TCP,443:31327/TCP   21d
+  ingress-nginx-controller-admission   ClusterIP   10.96.76.113   <none>        443/TCP                      21d
+> curl localhost:30431/api
+```
+
+### 8. Search logging

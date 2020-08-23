@@ -2,22 +2,21 @@ apiVersion: v1
 kind: Service
 metadata:
   name: kibana
-  namespace: kube-system
+  namespace: elk-stack
 spec:
   selector:
     app: kibana
   ports:
   - protocol: TCP
     port: 5601
-    targetPort: http
-    nodePort: 30050
+    targetPort: 5601
   type: NodePort
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kibana
-  namespace: kube-system
+  namespace: elk-stack
   labels:
     app: kibana
 spec:
@@ -32,10 +31,10 @@ spec:
     spec:
       containers:
       - name: kibana
-        image: kibana:5.6
+        image: elastic/kibana:6.8.6
         ports:
         - containerPort: 5601
           name: http
-        env:
-        - name: ELASTICSEARCH_URL
-          value: "http://elasticsearch:9200"
+#        env:
+#        - name: ELASTICSEARCH_URL
+#          value: "elasticsearch.elk-stack.svc.cluster.local:9200"
