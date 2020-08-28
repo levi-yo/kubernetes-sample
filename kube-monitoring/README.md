@@ -474,3 +474,5 @@ Copy id를 눌러 id를 복사한다.
 <br>
 <br>
 Spring JVM 메트릭정보로 위 그라파나 홈페이지에서 찾으면 샘플로 많이 있으니, 한번 적용해보자.
+
+[참조](https://gruuuuu.github.io/cloud/monitoring-02/)
