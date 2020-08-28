@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: sample-deployment
+  namespace: springboot-app
 spec:
   replicas: 1
   selector:
@@ -14,7 +15,7 @@ spec:
     spec:
       containers:
         - name: springboot-web
-          image: 1223yys/springboot-web:jdk14
+          image: 1223yys/springboot-web:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 9090

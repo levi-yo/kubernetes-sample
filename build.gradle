@@ -21,6 +21,11 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
+
+	//monitoring
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation "io.micrometer:micrometer-registry-prometheus"
+
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
