@@ -79,3 +79,26 @@ CREATE 버튼을 누르면, 우리가 정의한 설정파일 기반으로 앱이
 
 ![app list](./images/app-list.png)
 ![app detail](./images/app-detail.png)
+
+## Disaster Recovery
+argocd-util를 이용해서 Argo CD 데이터를 백업&복구 가능하다.
+
+````shell script
+> argocd version | grep server
+argocd-server: <version> ex)v1.7.2
+> export VERSION=<version>
+````
+
+export to a backup(pwd : /kubernetes-sample)
+
+```shell script
+> docker run -v $HOME/.kube:/home/argocd/.kube --rm argoproj/argocd:$VERSION \
+argocd-util export -n argocd > $PWD/kube-argo/backup/backup.yaml
+```
+
+import from a backup(pwd : /kubernetes-sample)
+
+```shell script
+> docker run -i -v $HOME/.kube:/home/argocd/.kube --rm argoproj/argocd:$VERSION \
+argocd-util import -n argocd - < $PWD/kube-argo/backup/backup.yaml
+```
