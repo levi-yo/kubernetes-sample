@@ -431,24 +431,17 @@ application.yml에 메트릭 정보를 수집할 수 있는 endpoint를 열어�
 ## 4.1 Datasource
 <img src="https://t1.daumcdn.net/cfile/tistory/991985445B8FC81E08" width="600" height="300">
 <br>
-<br>
 prometheus를 datasource로 추가한다.
-<br>
 <br>
 <img src="https://user-images.githubusercontent.com/15958325/78098151-26ab8200-7419-11ea-8860-1f0988ab7fac.png" width="600" height="300">
 <br>
-<br>
 prometheus 접속 정보를 넣어준다.
-<br>
 <br>
 <img src="https://user-images.githubusercontent.com/15958325/78098229-5fe3f200-7419-11ea-99be-f9c49d8e4cbc.png" width="600" height="300">
 <br>
-<br>
 클러스터 ip:port를 직접 넣어도되고, "prometheus-service.monitoring.svc.cluster.local:30003"처럼 클러스터 도메인으로 넣어줘도 된다.
 <br>
-<br>
 <img src="https://user-images.githubusercontent.com/15958325/78098290-99b4f880-7419-11ea-9514-88293010390d.png" width="600" height="300">
-<br>
 <br>
 위 이미지가 나오면 데이터소스 추가 성공!
 
@@ -459,18 +452,15 @@ prometheus 접속 정보를 넣어준다.
 
 <img src="https://user-images.githubusercontent.com/15958325/78098569-6d4dac00-741a-11ea-8379-c3e260a7615f.png" width="600" height="300">
 <br>
-<br>
 Copy id를 눌러 id를 복사한다.
-<br>
 <br>
 <img src="https://user-images.githubusercontent.com/15958325/78098629-9c641d80-741a-11ea-8cf6-dcc60869a614.png" width="600" height="300">
 <img src="https://user-images.githubusercontent.com/15958325/78098633-9ec67780-741a-11ea-8c22-ef75ddccdaba.png" width="600" height="300">
 <br>
-<br>
 아래와 같이 대시보드에 매트릭정보가 보인다.
-<br>
 <br>
 <img src="https://user-images.githubusercontent.com/15958325/78098636-a128d180-741a-11ea-9f1c-af6c6ca7fd8d.png" width="600" height="300">
 <br>
-<br>
 Spring JVM 메트릭정보로 위 그라파나 홈페이지에서 찾으면 샘플로 많이 있으니, 한번 적용해보자.
+
+[참조](https://gruuuuu.github.io/cloud/monitoring-02/)
