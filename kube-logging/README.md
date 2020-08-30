@@ -173,7 +173,7 @@ fluentd-container-logging
 ````
 ### 6. Running application
 ````shell script
-> kubectl apply -f ./kube-resource/deployment-sample.yaml
+> kubectl apply -f ./kube-resource/deployment.yaml
 > kubectl get pod
   NAME                                 READY   STATUS    RESTARTS   AGE
   sample-deployment-5fbf569554-4pzrf   0/1     Running   0          17s

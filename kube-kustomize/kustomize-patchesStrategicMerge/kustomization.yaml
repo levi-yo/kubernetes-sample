@@ -1,0 +1,5 @@
+resources:
+  - deployment.yaml
+patchesStrategicMerge:
+  - patch-replica.yaml
+  - patch-resource.yaml
