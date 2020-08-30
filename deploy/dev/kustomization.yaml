@@ -1,0 +1,26 @@
+#구버전 base 불러오는 방법
+bases:
+  - ../base
+
+namespace: springboot-web-dev
+
+patchesStrategicMerge:
+  - ./patch-replica.yaml
+
+patchesJson6902:
+  - target:
+      kind: Deployment
+      name: springboot-app-deployment
+      group: apps
+      version: v1
+    path: patch-resource.yaml
+  - target:
+      kind: Ingress
+      name: springboot-web-ingress
+      group: extensions
+      version: v1beta1
+    path: patch-ingress.yaml
+
+images:
+  - name: 1223yys/springboot-web
+    newTag: latest

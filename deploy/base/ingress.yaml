@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: springboot-web-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: fix-me
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: springboot-web-service
+              servicePort: 80
+
