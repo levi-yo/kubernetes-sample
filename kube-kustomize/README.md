@@ -551,3 +551,10 @@ EOF
 ````
 
 추가적으로 patch 파일들을 몇가지 작성하였다.
+
+```shell script
+> cd dev
+> kubectl kustomize ./
+> cd ../prod
+> kubectl kustomize ./
+```
