@@ -558,3 +558,83 @@ EOF
 > cd ../prod
 > kubectl kustomize ./
 ```
+
+```yaml
+#dev
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: my-nginx
+  name: my-nginx
+  namespace: dev-my-nginx
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+  selector:
+    run: my-nginx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-nginx
+  namespace: dev-my-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: my-nginx
+  template:
+    metadata:
+      labels:
+        run: my-nginx
+    spec:
+      containers:
+        - image: my.image.registry/nginx:1.4.0
+          name: my-nginx
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: 512Mi
+              
+#prod
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: my-nginx
+  name: my-nginx
+  namespace: prod-my-nginx
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+  selector:
+    run: my-nginx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-nginx
+  namespace: prod-my-nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      run: my-nginx
+  template:
+    metadata:
+      labels:
+        run: my-nginx
+    spec:
+      containers:
+        - image: my.image.registry/nginx:1.4.0
+          name: my-nginx
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: 1024Mi
+```
