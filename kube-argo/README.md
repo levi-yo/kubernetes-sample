@@ -53,3 +53,26 @@ INFO[0000] ClusterRole "argocd-manager-role" created
 INFO[0000] ClusterRoleBinding "argocd-manager-role-binding" created 
 Cluster 'https://kubernetes.docker.internal:6443' added
 ````
+
+## argocd setting
+![create project](./images/create-project.png)
+
+Projects > NEW PROJECT 
+
+![create project](./images/create-project-2.png)
+
+argocd는 git을 바탕으로 변경사항을 감지해 배포하기 때문에 github repository 주소가 필요하다.
+
+그리고, 미리 네임스페이스를 생성해준다.
+
+![create app](./images/create-app.png)
+
+이미지처럼 필요한 정보를 넣어준다. Sync 정책은 automatic으로 잡아주었는데, 실제 깃헙에 변경사항을 자동으로 감지해 Sync를 맞춰준다.
+또한 해당 앱 배포를 위해 변경사항을 감지할 디렉토리를 "/dev"로 잡아주었다. 그리고 해당 앱이 배포될 클러스터 정보, 네임스페이스 정보를 넣어주었다.
+
+마지막으로 우리는 쿠버네티스 오브젝트 관리를 kustomize로 하기때문에 가장 마지막에 Kustomize를 선택한다.
+
+CREATE 버튼을 누르면, 우리가 정의한 설정파일 기반으로 앱이 배포된다.
+
+![app list](./images/app-list.png)
+![app detail](./images/app-detail.png)
