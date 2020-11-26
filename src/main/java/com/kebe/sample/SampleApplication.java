@@ -3,8 +3,10 @@ package com.kebe.sample;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -21,9 +23,9 @@ public class SampleApplication {
         SpringApplication.run(SampleApplication.class, args);
     }
 
-    @RequestMapping("/api")
-    public String api(String arg){
+    @RequestMapping("/api/{id}")
+    public Mono<String> api(String arg){
         log.info("SampleApplication#api :::: current time = {}", LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault()));
-        return "new api ! - "+random;
+        return Mono.just("new api ! - "+random);
     }
 }

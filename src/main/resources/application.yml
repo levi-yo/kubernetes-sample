@@ -3,3 +3,7 @@ management:
     web:
       exposure:
         include: prometheus, health, metrics, prometheus
+
+spring:
+  profiles:
+    active: test

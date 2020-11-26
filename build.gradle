@@ -19,17 +19,28 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.2.1.RELEASE'
+
 	compileOnly 'org.projectlombok:lombok'
 
 	//monitoring
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation "io.micrometer:micrometer-registry-prometheus"
 
+	implementation "io.opentracing.contrib:opentracing-spring-jaeger-cloud-starter:2.0.3"
+
 	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'io.projectreactor:reactor-test'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
+
+	implementation("io.projectreactor.addons:reactor-extra:3.3.0.RELEASE")
+	implementation("org.springframework.boot:spring-boot-starter-aop:2.3.0.RELEASE")
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis-reactive', version: '2.2.1.RELEASE'
+
 }
 
 test {
